@@ -1,4 +1,8 @@
-from pydantic_settings import BaseSettings, SettingsConfigDict
+import json
+from typing import Annotated
+
+from pydantic import field_validator
+from pydantic_settings import BaseSettings, NoDecode, SettingsConfigDict
 
 
 class Settings(BaseSettings):
@@ -14,9 +18,19 @@ class Settings(BaseSettings):
     secret_key: str = "proofhire-dev-secret-change-me"
     access_token_expire_minutes: int = 60 * 24 * 7
     algorithm: str = "HS256"
-    cors_origins: list[str] = ["http://localhost:3000", "http://localhost:5173"]
+    cors_origins: Annotated[list[str], NoDecode] = ["http://localhost:3000", "http://localhost:5173"]
     upload_dir: str = "./uploads"
     max_upload_bytes: int = 5 * 1024 * 1024
+
+    @field_validator("cors_origins", mode="before")
+    @classmethod
+    def parse_cors_origins(cls, v):
+        if isinstance(v, str):
+            v = v.strip()
+            if v.startswith("["):
+                return json.loads(v)
+            return [item.strip() for item in v.split(",") if item.strip()]
+        return v
 
 
 settings = Settings()
