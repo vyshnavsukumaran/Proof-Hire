@@ -1,0 +1,26 @@
+# --- Secrets ---
+.env
+.env.*
+!.env.example
+
+# --- Python / Backend ---
+backend/.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+backend/*.db
+backend/test_*.db
+backend/uploads/
+
+# --- Node / Frontend ---
+frontend/node_modules/
+frontend/.next/
+frontend/out/
+frontend/build/
+frontend/.vercel
+
+# --- Misc ---
+.DS_Store
+*.log
+*.tsbuildinfo
