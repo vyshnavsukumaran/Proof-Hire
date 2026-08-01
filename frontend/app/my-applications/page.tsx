@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Shell } from "@/components/shell";
 import { Button, Card, Chip, EmptyState, Spinner, StatusBadge } from "@/components/ui";
 import { useAuth } from "@/lib/auth-context";
@@ -10,6 +11,7 @@ import type { Application } from "@/lib/types";
 
 export default function ApplicationsPage() {
   const { user, loading } = useAuth();
+  const router = useRouter();
   const [apps, setApps] = useState<Application[]>([]);
   const [fetching, setFetching] = useState(true);
 
@@ -114,7 +116,7 @@ export default function ApplicationsPage() {
                     size="sm"
                     variant="blue"
                     onClick={() =>
-                      (window.location.href = `/inbox?candidate=${app.candidate_id}&employer=${user.id}&job=${app.job_id}`)
+                      router.push(`/inbox?candidate=${app.candidate_id}&employer=${user.id}&job=${app.job_id}`)
                     }
                   >
                     Message

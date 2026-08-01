@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState } from "react";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { Shell } from "@/components/shell";
 import { Avatar, Badge, Button, Spinner, EmptyState } from "@/components/ui";
 import { ProofCard, SkillChips } from "@/components/proof-card";
@@ -12,6 +12,7 @@ import type { UserWithProfile } from "@/lib/types";
 export default function PortfolioPage() {
   const { id } = useParams<{ id: string }>();
   const { user } = useAuth();
+  const router = useRouter();
   const [candidate, setCandidate] = useState<UserWithProfile | null>(null);
   const [fetching, setFetching] = useState(true);
 
@@ -57,7 +58,7 @@ export default function PortfolioPage() {
         {canMessage && (
           <Button
             onClick={() =>
-              (window.location.href = `/inbox?candidate=${candidate.id}&employer=${user.id}`)
+              router.push(`/inbox?candidate=${candidate.id}&employer=${user.id}`)
             }
           >
             Message {candidate.name.split(" ")[0]}

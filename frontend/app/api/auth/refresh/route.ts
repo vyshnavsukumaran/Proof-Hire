@@ -7,15 +7,17 @@ const REFRESH_COOKIE_NAME = "proofhire_refresh";
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7; // 7 days
 
-const cookieOptions = {
-  httpOnly: true,
-  sameSite: "lax" as const,
-  secure: process.env.NODE_ENV === "production",
-  path: "/",
-  maxAge: COOKIE_MAX_AGE,
-};
+function cookieOptions(secure: boolean) {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure,
+    path: "/",
+    maxAge: COOKIE_MAX_AGE,
+  };
+}
 
-export async function POST() {
+export async function POST(request: NextRequest) {
   const cookieStore = await cookies();
   const refreshToken = cookieStore.get(REFRESH_COOKIE_NAME)?.value;
   if (!refreshToken) {
@@ -33,8 +35,9 @@ export async function POST() {
     response.cookies.delete(REFRESH_COOKIE_NAME);
     return response;
   }
+  const opts = cookieOptions(request.url.startsWith("https://"));
   const response = NextResponse.json(data, { status: 200 });
-  response.cookies.set(COOKIE_NAME, data.access_token, cookieOptions);
-  response.cookies.set(REFRESH_COOKIE_NAME, data.refresh_token, cookieOptions);
+  response.cookies.set(COOKIE_NAME, data.access_token, opts);
+  response.cookies.set(REFRESH_COOKIE_NAME, data.refresh_token, opts);
   return response;
 }

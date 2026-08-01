@@ -9,13 +9,15 @@ type Context = { params: Promise<{ path: string[] }> };
 
 const COOKIE_MAX_AGE = 60 * 60 * 24 * 7;
 
-const cookieOptions = {
-  httpOnly: true,
-  sameSite: "lax" as const,
-  secure: process.env.NODE_ENV === "production",
-  path: "/",
-  maxAge: COOKIE_MAX_AGE,
-};
+function cookieOptions(secure: boolean) {
+  return {
+    httpOnly: true,
+    sameSite: "lax" as const,
+    secure,
+    path: "/",
+    maxAge: COOKIE_MAX_AGE,
+  };
+}
 
 async function refreshTokens(): Promise<{ access: string; refresh: string } | null> {
   const cookieStore = await cookies();
@@ -88,8 +90,9 @@ async function proxy(request: NextRequest, context: Context) {
       });
     }
     if (freshTokens) {
-      response.cookies.set(COOKIE_NAME, freshTokens.access, cookieOptions);
-      response.cookies.set(REFRESH_COOKIE_NAME, freshTokens.refresh, cookieOptions);
+      const opts = cookieOptions(request.url.startsWith("https://"));
+      response.cookies.set(COOKIE_NAME, freshTokens.access, opts);
+      response.cookies.set(REFRESH_COOKIE_NAME, freshTokens.refresh, opts);
     }
     return response;
   } catch {

@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Shell } from "@/components/shell";
 import { Avatar, Badge, Button, EmptyState, Spinner } from "@/components/ui";
 import { ProofCard, SkillChips } from "@/components/proof-card";
@@ -11,6 +12,7 @@ import type { Project } from "@/lib/types";
 
 export default function MyPortfolioPage() {
   const { user, loading, refresh } = useAuth();
+  const router = useRouter();
   const [projects, setProjects] = useState<Project[]>([]);
   const [busy, setBusy] = useState(false);
 
@@ -66,7 +68,7 @@ export default function MyPortfolioPage() {
           <Button variant={isLive ? "white" : "mint"} onClick={toggleVisibility} disabled={busy}>
             {isLive ? "Set to draft" : "Publish portfolio"}
           </Button>
-          <Button variant="orange" onClick={() => (window.location.href = "/builder")}>
+          <Button variant="orange" onClick={() => router.push("/builder")}>
             Edit portfolio
           </Button>
         </div>

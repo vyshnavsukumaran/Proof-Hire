@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { Shell } from "@/components/shell";
 import { Button, Card, Chip, EmptyState, Field, Spinner, Avatar } from "@/components/ui";
 import { useAuth } from "@/lib/auth-context";
@@ -27,6 +28,7 @@ const SKILLS = [
 
 export default function DiscoverPage() {
   const { user, loading } = useAuth();
+  const router = useRouter();
   const [q, setQ] = useState("");
   const [skills, setSkills] = useState<string[]>([]);
   const [availability, setAvailability] = useState<string[]>([]);
@@ -85,13 +87,13 @@ export default function DiscoverPage() {
         {user?.role === "candidate" && (
           <Button
             variant="blue"
-            onClick={() => (window.location.href = "/jobs")}
+            onClick={() => router.push("/jobs")}
           >
             Browse all jobs
           </Button>
         )}
         {user?.role === "employer" && (
-          <Button onClick={() => (window.location.href = "/post-job")}>
+          <Button onClick={() => router.push("/post-job")}>
             + Post a job
           </Button>
         )}
